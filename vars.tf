@@ -22,7 +22,7 @@ variable "function_name" {
 }
 
 variable "handler_name" {
-  description = "The name of the function handler"
+  description = "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function#handler"
   type        = string
 }
 
@@ -58,6 +58,7 @@ variable "source_object_version" {
   description = "The AWS function name"
   type        = string
 }
+
 variable "environment_variables" {
   description = "Default environment variables as a map of key value pairs"
   type        = map(string)
