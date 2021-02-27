@@ -54,10 +54,10 @@ variable "source_key" {
   type        = string
 }
 
-variable "source_object_version" {
-  description = "The AWS function name"
-  type        = string
-}
+#variable "source_object_version" {
+#  description = "The AWS function name"
+#  type        = string
+#}
 
 variable "environment_variables" {
   description = "Default environment variables as a map of key value pairs"
