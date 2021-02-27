@@ -60,7 +60,7 @@ resource "aws_lambda_function" "this" {
   s3_bucket = var.source_bucket
   s3_key = var.source_key
   #s3_object_version = var.source_object_version
-  source_code_hash = filebase64sha256("${var.handler_name}}.zip")
+  source_code_hash = filebase64sha256("${var.handler_name}.zip")
 
   runtime = var.function_runtime
   tracing_config {
