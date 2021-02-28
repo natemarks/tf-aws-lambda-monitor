@@ -85,6 +85,44 @@ resource "aws_lambda_function" "this" {
   }
 }
 
+
+# -----------------------------------------------------------------------------
+# Manage the log retention
+# -----------------------------------------------------------------------------
+resource "aws_cloudwatch_log_group" "this" {
+  name              = "/aws/lambda/${var.function_name}"
+  retention_in_days = var.lambda_log_retention_in_days
+}
+
+resource "aws_iam_policy" "lambda_logging" {
+  name        = "lambda_logging"
+  path        = "/"
+  description = "IAM policy for logging from a lambda"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:*",
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+
+resource "aws_iam_role_policy_attachment" "lambda_logs" {
+  role       = aws_iam_role.this.name
+  policy_arn = aws_iam_policy.lambda_logging.arn
+}
+
 # -----------------------------------------------------------------------------
 # Create the event to fire the lambda
 # -----------------------------------------------------------------------------
@@ -123,4 +161,38 @@ resource "aws_sns_topic_subscription" "this" {
   topic_arn = aws_sns_topic.this.arn
   protocol  = "https"
   endpoint  = var.opsgenie_https_sns_endpoint
+}
+
+
+# -----------------------------------------------------------------------------
+# Create the alarm and the metric log filter to trigger when we get the p1
+# event that the dns monitor generates when there are too few IP addresses in
+# the dns response
+# -----------------------------------------------------------------------------
+
+
+resource "aws_cloudwatch_metric_alarm" "too_few_addresses" {
+  alarm_name                = "lambda_dns_monitor_too_few_addresses"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = "2"
+  metric_name               = "Count of too-few-addresses events"
+  namespace                 = var.function_name
+  period                    = "60"
+  statistic                 = "Average"
+  threshold                 = ".5"
+  alarm_description         = "This metric the count of too-few-address log messages"
+  insufficient_data_actions = []
+}
+
+resource "aws_cloudwatch_log_metric_filter" "too_few_addresses" {
+  name           = "Count of too-few-addresses events"
+  pattern        = "{$.imprivata_event_severity = 1}"
+  log_group_name = "/aws/lambda/${var.function_name}"
+
+  metric_transformation {
+    name      = "transform too_few_addresses events"
+    namespace = var.function_name
+    value     = "1"
+    default_value = "0"
+  }
 }

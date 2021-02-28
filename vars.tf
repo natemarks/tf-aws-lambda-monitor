@@ -77,8 +77,13 @@ variable "schedule_expression_desc" {
   default = "Every minute"
 }
 
-
 variable "opsgenie_https_sns_endpoint" {
   description = "https://docs.opsgenie.com/docs/aws-cloudwatch-integration"
   type = string
+}
+
+variable "lambda_log_retention_in_days" {
+  description = "Number of days to retain the lambda log"
+  type = number
+  default = 14
 }
