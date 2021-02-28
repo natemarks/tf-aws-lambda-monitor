@@ -108,3 +108,19 @@ resource "aws_lambda_permission" "this" {
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.this.arn
 }
+
+
+# -----------------------------------------------------------------------------
+# Create the SNS topic to opsgenie
+# https://docs.opsgenie.com/docs/aws-cloudwatch-integration
+# -----------------------------------------------------------------------------
+
+resource "aws_sns_topic" "this" {
+  name = "opsgenie"
+}
+
+resource "aws_sns_topic_subscription" "this" {
+  topic_arn = aws_sns_topic.this.arn
+  protocol  = "https"
+  endpoint  = var.opsgenie_https_sns_endpoint
+}

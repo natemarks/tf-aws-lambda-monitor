@@ -1,4 +1,4 @@
-This module deploys a montor funcotjn that is triggered by a cloudwatch schedule and writes events to  cloudwatch logs
+This module deploys a monitor function that is triggered by a cloudwatch schedule and writes events to  cloudwatch logs
 
 Assumptions:
 

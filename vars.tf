@@ -76,3 +76,9 @@ variable "schedule_expression_desc" {
   type = string
   default = "Every minute"
 }
+
+
+variable "opsgenie_https_sns_endpoint" {
+  description = "https://docs.opsgenie.com/docs/aws-cloudwatch-integration"
+  type = string
+}
