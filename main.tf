@@ -178,12 +178,12 @@ resource "aws_sns_topic_subscription" "this" {
 resource "aws_cloudwatch_metric_alarm" "too_few_addresses" {
   alarm_name                = "lambda_dns_monitor_too_few_addresses"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = "2"
+  evaluation_periods        = "1"
   metric_name               = "Count of too-few-addresses events"
   namespace                 = var.function_name
   period                    = "60"
-  statistic                 = "Average"
-  threshold                 = ".5"
+  statistic                 = "Sum"
+  threshold                 = "0"
   alarm_description         = "This metric the count of too-few-address log messages"
   insufficient_data_actions = []
 }
