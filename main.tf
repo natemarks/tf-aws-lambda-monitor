@@ -195,4 +195,7 @@ resource "aws_cloudwatch_log_metric_filter" "too_few_addresses" {
     value     = "1"
     default_value = "0"
   }
+  depends_on = [
+    aws_cloudwatch_log_group.this,
+  ]
 }
