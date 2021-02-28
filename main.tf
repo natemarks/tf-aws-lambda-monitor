@@ -176,7 +176,8 @@ resource "aws_sns_topic_subscription" "this" {
 
 
 resource "aws_cloudwatch_metric_alarm" "too_few_addresses" {
-  alarm_name                = "lambda_dns_monitor_too_few_addresses"
+  alarm_name                = "OpsGenie: lambda-dns-lookup-monitor (too few addresses)"
+  alarm_description         = "When lambda-dns-lookup-monitor throws sev 1: too few addresses, alert OpsGenie"
   comparison_operator       = "GreaterThanThreshold"
   evaluation_periods        = "1"
   metric_name               = "transform too_few_addresses events"
@@ -184,7 +185,6 @@ resource "aws_cloudwatch_metric_alarm" "too_few_addresses" {
   period                    = "60"
   statistic                 = "Sum"
   threshold                 = "0"
-  alarm_description         = "This metric the count of too-few-address log messages"
   actions_enabled     = "true"
   alarm_actions       = [aws_sns_topic.this.arn]
   ok_actions          = [aws_sns_topic.this.arn]
