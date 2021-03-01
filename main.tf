@@ -78,7 +78,8 @@ resource "aws_lambda_function" "this" {
   environment {
     variables = merge(
     {
-      DEBUG_FUNCTION = "FALSE"
+      DEBUG = "FALSE"
+      RANDOM_FAILURES = "FALSE"
     },
     var.environment_variables,
     )
