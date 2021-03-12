@@ -233,7 +233,7 @@ resource "aws_cloudwatch_metric_alarm" "imprivata_event_severity_2" {
 }
 
 resource "aws_cloudwatch_log_metric_filter" "lambda_error" {
-  name           = "Count of imprivata_event_severity:2 log events"
+  name           = "Count of imprivata_event_severity 2 log events"
   pattern        = "{$.imprivata_event_severity = 2}"
   log_group_name = "/aws/lambda/${var.function_name}"
 
