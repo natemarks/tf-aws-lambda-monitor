@@ -207,3 +207,43 @@ resource "aws_cloudwatch_log_metric_filter" "too_few_addresses" {
     aws_cloudwatch_log_group.this,
   ]
 }
+
+
+# -----------------------------------------------------------------------------
+# Create the alarm and the metric log filter to trigger when the lambda fails.
+# This doesn't necessarily mean there is a problem with the resource under test.
+# It just means the test isn't working so we have a blind spot
+# -----------------------------------------------------------------------------
+
+
+resource "aws_cloudwatch_metric_alarm" "imprivata_event_severity_2" {
+  alarm_name                = "OpsGenie: lambda-dns-lookup-monitor severity 2"
+  alarm_description         = "lambda-dns-lookup-monitor threw an error. blind, not broken"
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = "1"
+  metric_name               = "metric_trans lambda-dns-lookup-monitor errors"
+  namespace                 = var.function_name
+  period                    = "60"
+  statistic                 = "Sum"
+  threshold                 = "0"
+  actions_enabled     = "true"
+  alarm_actions       = [aws_sns_topic.this.arn]
+  ok_actions          = [aws_sns_topic.this.arn]
+  insufficient_data_actions = []
+}
+
+resource "aws_cloudwatch_log_metric_filter" "lambda_error" {
+  name           = "Count of imprivata_event_severity:2 log events"
+  pattern        = "{$.imprivata_event_severity = 2}"
+  log_group_name = "/aws/lambda/${var.function_name}"
+
+  metric_transformation {
+    name      = "metric_trans lambda-dns-lookup-monitor errors"
+    namespace = var.function_name
+    value     = "1"
+    default_value = "0"
+  }
+  depends_on = [
+    aws_cloudwatch_log_group.this,
+  ]
+}
